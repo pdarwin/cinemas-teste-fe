@@ -13,12 +13,12 @@ export default function MyDeleteForm({ type, getData }) {
   const params = useParams();
 
   let deleteType;
-  if (type === "Empresas") {
-    deleteType = "Empresa/" + id;
-  } else if (type === "Pessoas") {
-    deleteType = "Pessoa/" + id;
-  } else if (type === "Salarios") {
-    deleteType = "Salario/" + id;
+  if (type === "Cinemas") {
+    deleteType = "Cinema/" + id;
+  } else if (type === "Atores") {
+    deleteType = "Ator/" + id;
+  } else if (type === "Filmes") {
+    deleteType = "Filme/" + id;
   }
 
   function eliminar() {

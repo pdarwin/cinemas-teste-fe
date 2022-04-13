@@ -1,18 +1,24 @@
 import {
   Button,
+  Chip,
+  FormControl,
   Grid,
-  InputAdornment,
+  InputLabel,
+  MenuItem,
+  OutlinedInput,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { blue } from "@mui/material/colors";
 import { actions } from "./ModalReducer";
 import { useCustomContext } from "./CustomContext";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import config from "../Config.json";
+import { Box } from "@mui/system";
 
 export default function MyForm({ type, getData }) {
   const [item, setItem] = useState({
@@ -24,17 +30,85 @@ export default function MyForm({ type, getData }) {
     data: null,
     quantidade: 0,
   });
+  const [id, setId] = useState();
+  const [cinemas, setCinemas] = useState([]);
+  const [atores, setAtores] = useState([]);
+  const [selAtores, setSelAtores] = useState([]);
   const { modalState, modalDispatch } = useCustomContext();
 
   const params = useParams();
 
+  useEffect(() => {
+    if (type === "Filmes") {
+      getCinemas();
+      getAtores();
+    }
+  }, []);
+
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
+
   let postType;
-  if (type === "Empresas") {
-    postType = "Empresa";
-  } else if (type === "Pessoas") {
-    postType = "Pessoa/" + params.id;
-  } else if (type === "Salarios") {
-    postType = "Salario/" + params.id;
+  if (type === "Cinemas") {
+    postType = "Cinema";
+  } else if (type === "Atores") {
+    postType = "Ator/" + id;
+  } else if (type === "Filmes") {
+    postType = "Filme/" + id;
+  }
+
+  function getCinemas() {
+    fetch(config.API_URL + "/getAllCinemas", {
+      headers: { "Content-type": "application/json" },
+    })
+      .then((response) => {
+        console.log(response);
+        // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
+        if (response.status !== 200) {
+          throw new Error("Erro:" + response.status);
+        }
+
+        console.log(response);
+        return response.json();
+      })
+      .then((parsedResponse) => {
+        console.log(parsedResponse);
+        setCinemas(parsedResponse);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }
+
+  function getAtores() {
+    fetch(config.API_URL + "/getAtores", {
+      headers: { "Content-type": "application/json" },
+    })
+      .then((response) => {
+        console.log(response);
+        // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
+        if (response.status !== 200) {
+          throw new Error("Erro:" + response.status);
+        }
+
+        console.log(response);
+        return response.json();
+      })
+      .then((parsedResponse) => {
+        console.log(parsedResponse);
+        setAtores(parsedResponse);
+      })
+      .catch((error) => {
+        alert(error);
+      });
   }
 
   function gravar() {
@@ -118,7 +192,7 @@ export default function MyForm({ type, getData }) {
         <Grid item xs={12}>
           <Typography variant="h5">{"Registo de " + type}</Typography>
         </Grid>
-        {type === "Empresas" || type === "Pessoas" ? (
+        {type === "Cinemas" || type === "Atores" || type === "Filmes" ? (
           <Grid item xs={12}>
             <TextField
               label="Nome"
@@ -134,7 +208,7 @@ export default function MyForm({ type, getData }) {
         ) : (
           ""
         )}
-        {type === "Empresas" ? (
+        {type === "Cinemas" ? (
           <Grid item xs={12}>
             <TextField
               label="Morada"
@@ -150,23 +224,7 @@ export default function MyForm({ type, getData }) {
         ) : (
           ""
         )}
-        {type === "Pessoas" ? (
-          <Grid item xs={12}>
-            <TextField
-              label="Idade"
-              value={item.idade}
-              onChange={(e) => {
-                setItem({ ...item, idade: e.target.value });
-              }}
-              style={{ backgroundColor: "white" }}
-              type="number"
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-            />
-          </Grid>
-        ) : (
-          ""
-        )}
-        {type === "Pessoas" ? (
+        {type === "Atores" ? (
           <Grid item xs={12}>
             <TextField
               label="Email"
@@ -182,7 +240,23 @@ export default function MyForm({ type, getData }) {
         ) : (
           ""
         )}
-        {type === "Empresas" || type === "Pessoas" ? (
+        {type === "Atores" ? (
+          <Grid item xs={12}>
+            <TextField
+              label="Telemovel"
+              value={item.telemovel}
+              onChange={(e) => {
+                setItem({ ...item, telemovel: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
+          </Grid>
+        ) : (
+          ""
+        )}
+        {type === "Cinemas" || type === "Filmes" ? (
           <Grid item xs={12}>
             <TextField
               label="Imagem"
@@ -198,41 +272,97 @@ export default function MyForm({ type, getData }) {
         ) : (
           ""
         )}
-        {type === "Salarios" ? (
-          <Grid item xs={12}>
-            <TextField
-              id="filled-adornment-amount"
-              value={item.quantidade}
-              onChange={(e) => {
-                setItem({ ...item, quantidade: e.target.value });
-              }}
-              InputProps={{
-                inputMode: "numeric",
-                pattern: "[0-9]*",
-                startAdornment: (
-                  <InputAdornment position="start">€</InputAdornment>
-                ),
-              }}
-              style={{ backgroundColor: "white" }}
-              type="number"
-              label="Quantidade"
-            />
-          </Grid>
-        ) : (
-          ""
-        )}
-        {type === "Salarios" ? (
+        {type === "Atores" ? (
           <Grid item xs={12}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                label="Data"
-                value={item.data}
+                label="Data de nascimento"
+                value={item.data_nascimento}
                 onChange={(newValue) => {
-                  setItem({ ...item, data: newValue });
+                  setItem({ ...item, data_nascimento: newValue });
                 }}
                 renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
+          </Grid>
+        ) : (
+          ""
+        )}
+        {type === "Filmes" ? (
+          <Grid item xs={12}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Data de lançamento"
+                value={item.data_lancamento}
+                onChange={(newValue) => {
+                  setItem({ ...item, data_lancamento: newValue });
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          </Grid>
+        ) : (
+          ""
+        )}
+        {type === "Filmes" ? (
+          <Grid item xs={6}>
+            <FormControl fullWidth>
+              <InputLabel id="cinema">Cinema</InputLabel>
+              <Select
+                labelId="cinema"
+                id="cinema"
+                value={item.cinema_id}
+                label="Cinema"
+                onChange={(e) => {
+                  setId(e.target.value);
+                }}
+              >
+                {cinemas.map((cinema) => (
+                  <MenuItem value={cinema.id} key={cinema.id}>
+                    {cinema.nome}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+        ) : (
+          ""
+        )}
+        {type === "Filmes" ? (
+          <Grid item xs={5}>
+            <FormControl fullWidth>
+              <InputLabel id="ator_l">Ator(es)</InputLabel>
+              <Select
+                labelId="autr"
+                id="ator"
+                multiple
+                value={selAtores}
+                onChange={(e) => {
+                  const {
+                    target: { value },
+                  } = e;
+                  setSelAtores(
+                    // On autofill we get a stringified value.
+                    typeof value === "string" ? value.split(",") : value
+                  );
+                }}
+                input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((obj) => (
+                      <Chip key={obj} label={atores[parseInt(obj) - 1].nome} />
+                    ))}
+                  </Box>
+                )}
+                MenuProps={MenuProps}
+              >
+                {atores.map((ator) => (
+                  <MenuItem value={ator.id} key={ator.id}>
+                    {ator.nome}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
         ) : (
           ""

@@ -8,6 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
+import { Box, Button } from "@mui/material";
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -30,13 +31,58 @@ export default function NavBar() {
               style={{ color: "white" }}
             >
               <Avatar
-                alt="Empresas Requalificar"
-                src="https://png.pngtree.com/template/20190316/ourmid/pngtree-books-logo-image_80041.jpg"
+                alt="Cinemas Requalificar"
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Twemoji12_1f4fd.svg/480px-Twemoji12_1f4fd.svg.png"
                 sx={{ p: 1 }}
               />
-              Empresas Requalificar
+              Cinemas Requalificar
             </IconButton>
           </Typography>
+          <Box
+            sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}
+            style={{ float: "right" }}
+          >
+            <Button
+              onClick={() => {
+                //getData();
+              }}
+              sx={{ m: 2, color: "white", display: "block" }}
+              size="small"
+              style={{ float: "right" }}
+            >
+              Filmes por Cinema
+            </Button>
+            <Button
+              onClick={() => {
+                navigate("/");
+              }}
+              sx={{ m: 2, color: "white", display: "block" }}
+              size="small"
+              style={{ float: "right" }}
+            >
+              Filmes por Ator
+            </Button>
+            <Button
+              onClick={() => {
+                navigate("/filmes");
+              }}
+              sx={{ m: 2, color: "white", display: "block" }}
+              size="small"
+              style={{ float: "right" }}
+            >
+              Gestão de Filmes
+            </Button>
+            <Button
+              onClick={() => {
+                navigate("/Atores");
+              }}
+              sx={{ m: 2, color: "white", display: "block" }}
+              size="small"
+              style={{ float: "right" }}
+            >
+              Atores
+            </Button>
+          </Box>
         </Toolbar>
       </Container>
     </AppBar>

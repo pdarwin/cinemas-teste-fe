@@ -17,42 +17,39 @@ export default function MyViewer({ type }) {
   const params = useParams();
 
   useEffect(() => {
-    console.log("tudo", data);
-    setData(null);
     getData();
   }, []);
 
   useEffect(() => {
-    console.log("data", data);
     if (data === null) {
       getData();
     }
   }, [data]);
 
   let getType;
-  if (type === "Empresas") {
-    getType = "Empresas";
-  } else if (type === "Pessoas") {
-    getType = "PessoasByEmpresa/" + params.id;
+  if (type === "Cinemas") {
+    getType = "AllCinemas";
+  } else if (type === "Atores") {
+    getType = "Atores/" + params.id;
   } else if (type === "Salarios") {
     getType = "SalariosByPessoa/" + params.id;
   }
 
   let columns = [{ field: "id", headerName: "ID", width: 250 }];
-  if (type === "Empresas") {
+  if (type === "Cinemas") {
     columns = [
       ...columns,
       { field: "nome", headerName: "Nome", width: 250 },
       { field: "morada", headerName: "Morada", width: 650 },
       { field: "imagem", headerName: "Imagem", width: 650 },
     ];
-  } else if (type === "Pessoas") {
+  } else if (type === "Atores") {
     columns = [
       ...columns,
       { field: "nome", headerName: "Nome", width: 250 },
-      { field: "idade", headerName: "Idade", width: 650 },
+      { field: "data_nascimento", headerName: "Data Nascimento", width: 650 },
       { field: "email", headerName: "Email", width: 650 },
-      { field: "imagem", headerName: "Imagem", width: 650 },
+      { field: "telemovel", headerName: "Telemovel", width: 650 },
     ];
   } else if (type === "Salarios") {
     columns = [
@@ -63,6 +60,7 @@ export default function MyViewer({ type }) {
   }
 
   function getData() {
+    setData(null);
     console.log(getType);
     fetch(config.API_URL + "/get" + getType, {
       headers: { "Content-type": "application/json" },

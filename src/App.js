@@ -1,16 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavBar from "./Componentes/NavBar";
 import MyModal from "./Componentes/MyModal";
-import MyViewer from "./Componentes/MyViewer";
 import { useReducer } from "react";
 import { initialState, ModalReducer } from "./Componentes/ModalReducer";
 import CustomContext from "./Componentes/CustomContext";
-
-const types = {
-  empresas: "Empresas",
-  pessoas: "Pessoas",
-  salarios: "Salarios",
-};
+import Atores from "./Componentes/Atores";
+import Cinemas from "./Componentes/Cinemas";
+import MyViewer from "./Componentes/MyViewer";
+import Filmes from "./Componentes/Filmes";
 
 function App() {
   const [modalState, modalDispatch] = useReducer(ModalReducer, initialState);
@@ -27,14 +24,16 @@ function App() {
           <MyModal />
           <NavBar />
           <Routes>
-            <Route path="/" element={<MyViewer type={types.empresas} />} />
+            <Route path="/" element={<Cinemas />} />
+            <Route path="/atores" element={<Atores />} />
+            <Route path="/filmes" element={<Filmes />} />
             <Route
-              path="/pessoasporempresa/:id"
-              element={<MyViewer type={types.pessoas} />}
+              path="/filmesporcinema/:id"
+              element={<MyViewer type="FilmesCinema" />}
             />
             <Route
-              path="/salariosporpessoa/:id"
-              element={<MyViewer type={types.salarios} />}
+              path="/filmesporator/:id"
+              element={<MyViewer type="FilmesCinema" />}
             />
           </Routes>
         </BrowserRouter>
