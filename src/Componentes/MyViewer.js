@@ -4,8 +4,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useCustomContext } from "./CustomContext";
 import config from "../Config.json";
-import MyForm from "./MyForm";
-import MyDeleteForm from "./MyDeleteForm";
+
+const columns = [
+  { field: "nome", headerName: "Nome", width: 250 },
+  { field: "data_lancamento", headerName: "Data de Lançamento", width: 650 },
+  { field: "imagem", headerName: "Imagem", width: 650 },
+];
 
 export default function MyViewer({ type }) {
   const [data, setData] = useState(null);
@@ -27,36 +31,10 @@ export default function MyViewer({ type }) {
   }, [data]);
 
   let getType;
-  if (type === "Cinemas") {
-    getType = "AllCinemas";
-  } else if (type === "Atores") {
-    getType = "Atores/" + params.id;
-  } else if (type === "Salarios") {
-    getType = "SalariosByPessoa/" + params.id;
-  }
-
-  let columns = [{ field: "id", headerName: "ID", width: 250 }];
-  if (type === "Cinemas") {
-    columns = [
-      ...columns,
-      { field: "nome", headerName: "Nome", width: 250 },
-      { field: "morada", headerName: "Morada", width: 650 },
-      { field: "imagem", headerName: "Imagem", width: 650 },
-    ];
-  } else if (type === "Atores") {
-    columns = [
-      ...columns,
-      { field: "nome", headerName: "Nome", width: 250 },
-      { field: "data_nascimento", headerName: "Data Nascimento", width: 650 },
-      { field: "email", headerName: "Email", width: 650 },
-      { field: "telemovel", headerName: "Telemovel", width: 650 },
-    ];
-  } else if (type === "Salarios") {
-    columns = [
-      ...columns,
-      { field: "quantidade", headerName: "Quantidade", width: 250 },
-      { field: "data", headerName: "Data", width: 650 },
-    ];
+  if (type === "FilmesCinema") {
+    getType = "FilmesByCinema" + params.id;
+  } else if (type === "FilmesAtor") {
+    getType = "FilmesByAtor/" + params.id;
   }
 
   function getData() {
@@ -87,31 +65,14 @@ export default function MyViewer({ type }) {
   return (
     <div style={{ height: 400, width: "100%" }}>
       <Typography variant="h5" my={3} align="center">
-        {"Gestão de " + type}
+        {type === "FilmesCinema" ? "Filmes por cinema" : "Filmes por ator"}
       </Typography>
-      {type === "Empresas" || type === "Pessoas" ? (
-        <Typography variant="caption">
-          Clique na linha para ver os detalhes
-        </Typography>
-      ) : (
-        ""
-      )}
       {data !== null ? (
         <DataGrid
           rows={data}
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
-          onCellClick={(params) => {
-            if (type === "Empresas") {
-              setData(null);
-              navigate("/pessoasporempresa/" + params.row.id);
-            }
-            if (type === "Pessoas") {
-              setData(null);
-              navigate("/salariosporpessoa/" + params.row.id);
-            }
-          }}
         />
       ) : (
         ""
@@ -127,8 +88,6 @@ export default function MyViewer({ type }) {
       >
         Voltar
       </Button>
-      <MyForm type={type} getData={getData} />
-      <MyDeleteForm type={type} getData={getData} />
     </div>
   );
 }

@@ -33,7 +33,7 @@ function App() {
             />
             <Route
               path="/filmesporator/:id"
-              element={<MyViewer type="FilmesCinema" />}
+              element={<MyViewer type="FilmesAtor" />}
             />
           </Routes>
         </BrowserRouter>
